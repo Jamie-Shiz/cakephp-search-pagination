@@ -80,8 +80,7 @@ class SearchPaginationComponent extends Component {
 	}
 
 /**
- * Extracts search parameters from params['url']
- * and stores them into Controller->data.
+ * Transfers search parameters from request->query to request->data
  * 
  * @param string  model name
  * @param array   default parameters
@@ -93,7 +92,7 @@ class SearchPaginationComponent extends Component {
 	}
 
 /**
- * Extracts search parameters from params['url'] and returns them.
+ * Returns query string containg search parameters
  * 
  * @return array
  */
