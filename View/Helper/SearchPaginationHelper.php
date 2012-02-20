@@ -39,7 +39,7 @@ class SearchPaginationHelper extends AppHelper {
  * 
  * Passes the search parameters to PaginatorHelper.
  */
-	public function beforeRender() {
+	public function beforeRender($viewFile) {
 		if (!empty($this->_searchParams)) {
 			$this->Paginator->options(array('url' => array('?' => $this->_searchParams)));
 		}

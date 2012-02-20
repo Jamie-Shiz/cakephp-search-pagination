@@ -31,21 +31,23 @@ class SearchPaginationHelperTest extends CakeTestCase {
 	public function testBeforeRender() {
 		$params = array('foo' => 'bar',
 			'baz' => array(1, 2, 3));
+		$viewFile = "not_used.ctp";
 		$this->_init($params);
 
 		$this->p->expects($this->once())->method('options')
 			->with($this->equalTo(
 					array('url' => array('?' => $params))
 				));
-		$this->h->beforeRender();
+		$this->h->beforeRender($viewFile);
 	}
 
 	public function testBeforeRender_empty() {
 		$params = array();
+		$viewFile = "not_used.ctp";
 		$this->_init($params);
 
 		$this->p->expects($this->never())->method('options');
-		$this->h->beforeRender();
+		$this->h->beforeRender($viewFile);
 	}
 
 }
