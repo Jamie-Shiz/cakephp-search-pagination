@@ -37,16 +37,23 @@ class SearchPaginationComponentTest extends CakeTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->c = new TestControllerForSearchPaginationComponentTestCase();
-		$this->c->constructClasses();
 		// set 'ext' parameter
 		if (preg_match('/parseExtensions/i', $this->getName())) {
 			Router::parseExtensions();
 		}
 		Router::connect('/:controller/:action/*');
-		$this->c->request->params = Router::parse($this->url);
-		$this->c->request->url = $this->url;
-		$this->c->request->query = array();
+		$this->c = $this->_getController();
+	}
+
+	protected function _getController() {
+		$parseEnvironment = false; // Do not use $_GET, $_POST, etc.
+		$request = new CakeRequest($this->url, $parseEnvironment);
+		$params = Router::parse($request->url);
+		$request->addParams($params);
+
+		$ctrl = new TestControllerForSearchPaginationComponentTestCase($request);
+		$ctrl->constructClasses();
+		return $ctrl;
 	}
 
 	public function tearDown() {
