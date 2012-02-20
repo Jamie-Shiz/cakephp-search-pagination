@@ -8,23 +8,18 @@ You can combined this plugin with [Search plugin](http://github.com/CakeDC/Searc
 SearchPaginationComponent can be an alternative to PrgComponent.
 
 
-## NOTICE ##
-THIS PLUGIN WAS COMPLETELY REWRITTEN FOR CAKEPHP-1.3 ON 2010-07-27.
-PLEASE CHECKOUT 1.2 BRANCH FOR OLDER VERSIONS.
-
-
 Requirements
 ------------------------------
 
-* PHP 5.1 or higher
-* CakePHP 1.3
+* CakePHP 2.0
+* PHP 5.2.8 or higher
 
 
 Installation
 ------------------------------
 
-    cd plugins/
-    git clone http://github.com/tkyk/cakephp-search-pagination search_pagination
+    cd app/Plugin
+    git clone http://github.com/tkyk/cakephp-search-pagination SearchPagination
 
 
 Usage
@@ -35,17 +30,17 @@ Usage
 All you have to do is to call `SearchPagination->setup` method in your actions.
 
     class UsersController extends AppController {
-      var $components = array('SearchPagination.SearchPagination');
+      public $components = array('SearchPagination.SearchPagination');
 
-      function search() {
+      public function search() {
         $this->SearchPagination->setup();
         //...
       }
     }
 
 `SearchPaginationComponent` provides `setup` method,
-which retrieves search parameters from `params['url']`,
-stores them into `data` attribute, and makes PaginatorHelper succeed the parameters.
+which retrieves search parameters from `request->query`,
+stores them into `request->data`, and makes PaginatorHelper succeed the parameters.
 
     setup(string $modelName, array $defaultParams);
 
@@ -54,7 +49,7 @@ If $modelName is omitted, controller's `modelClass` is used.
 If $defaultParams is omitted, an empty array() is stored in the `data`
 when no search paramters are passed.
 
-    function search() {
+    public function search() {
       $this->SearchPagination->setup('User');
     
       // $this->data[Model] always contains the search parameters.
