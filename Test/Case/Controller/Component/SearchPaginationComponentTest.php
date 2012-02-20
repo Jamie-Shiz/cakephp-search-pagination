@@ -19,7 +19,7 @@ class TestControllerForSearchPaginationComponentTestCase extends Controller {
 
 	public $redirectUrl;
 
-	public function redirect($url) {
+	public function redirect($url, $status = null, $exit = true) {
 		$this->redirected = true;
 		$this->redirectUrl = $url;
 	}
