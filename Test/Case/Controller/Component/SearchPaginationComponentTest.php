@@ -2,6 +2,7 @@
 
 App::uses('SearchPaginationComponent', 'SearchPagination.Controller/Component');
 App::uses('Controller', 'Controller');
+App::uses('CakeRequest', 'Network');
 App::uses('Router', 'Routing');
 
 /**
