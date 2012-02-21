@@ -145,23 +145,94 @@ class SearchPaginationComponentTest extends CakeTestCase {
 		$this->assertIdentical($default, $this->c->request->data[$model]);
 	}
 
-	public function testSetupHelper() {
+	protected function _assertHelperOrders() {
+		$paginatorFound = $searchPaginationFound = false;
+		$pluginHelperName = $this->c->SearchPagination->settings['helperName'];
+		foreach($this->c->helpers as $k => $v) {
+			if($k === 'Paginator' || $v === 'Paginator') {
+				$paginatorFound = true;
+			}
+			if($k === $pluginHelperName || $v === $pluginHelperName) {
+				$searchPaginationFound = true;
+				if(!$paginatorFound) {
+					$this->fail("$pluginHelperName is located before PaginatorHelper");
+				} else {
+					$this->assertTrue(true);
+				}
+			}
+		}
+		if(!$paginatorFound) {
+			$this->fail("Paginator Helper is not registered");
+		}
+		if(!$searchPaginationFound) {
+			$this->fail("$pluginHelperName is not registered");
+		}
+	}
+
+	public function testSetupHelper_emptyHelpers() {
 		$params = array('foo' => 'bar',
 			'baz' => array(1, 2, 3));
 
+		$this->c->helpers = array();
 		$beforeCount = count($this->c->helpers);
 		$this->c->SearchPagination->setupHelper($params);
-		$this->assertIdentical(array('__search_params' => $params), $this->c->helpers[$this->c->SearchPagination->settings['helperName']]);
-		$afterCount = count($this->c->helpers);
-		$this->assertEqual($beforeCount + 1, $afterCount);
+		$this->assertIdentical(
+			array('__search_params' => $params),
+			$this->c->helpers[$this->c->SearchPagination->settings['helperName']]
+		);
+		$this->assertEquals($beforeCount + 2, count($this->c->helpers));
+		$this->_assertHelperOrders();
+	}
 
+	public function testSetupHelper_searchPaginationHelperIsAlreadyInHelpers() {
+		$params = array('foo' => 'bar',
+			'baz' => array(1, 2, 3));
 		$this->c->helpers = array('Html', $this->c->SearchPagination->settings['helperName'], 'Form');
 		$beforeCount = count($this->c->helpers);
 		$this->c->SearchPagination->setupHelper($params);
-		$this->assertIdentical(array('__search_params' => $params), $this->c->helpers[$this->c->SearchPagination->settings['helperName']]);
+		$this->assertIdentical(
+			array('__search_params' => $params),
+			$this->c->helpers[$this->c->SearchPagination->settings['helperName']]
+		);
 		$this->assertFalse(in_array($this->c->SearchPagination->settings['helperName'], $this->c->helpers));
-		$afterCount = count($this->c->helpers);
-		$this->assertEqual($beforeCount, $afterCount);
+		$this->assertEquals($beforeCount + 1, count($this->c->helpers));
+		$this->_assertHelperOrders();
+	}
+
+	public function testSetupHelper_paginatorHelperIsAlreadyInHelpers() {
+		$params = array('foo' => 'bar',
+			'baz' => array(1, 2, 3));
+		$this->c->helpers = array('Html', 'Paginator', 'Form');
+		$beforeCount = count($this->c->helpers);
+		$this->c->SearchPagination->setupHelper($params);
+		$this->assertIdentical(
+			array('__search_params' => $params),
+			$this->c->helpers[$this->c->SearchPagination->settings['helperName']]
+		);
+		$this->assertFalse(in_array($this->c->SearchPagination->settings['helperName'], $this->c->helpers));
+		$this->assertEquals($beforeCount + 1, count($this->c->helpers));
+		$this->_assertHelperOrders();
+	}
+
+	public function testSetupHelper_bothHelpersAreAlreadyInHelpers() {
+		$params = array('foo' => 'bar',
+			'baz' => array(1, 2, 3));
+		$this->c->helpers = array(
+			'Html',
+			$this->c->SearchPagination->settings['helperName'] => array('__search_params' => array('c' => 'd')),
+			'Paginator' => array('a' => 'b'),
+		   	'Form'
+		);
+		$beforeCount = count($this->c->helpers);
+		$this->c->SearchPagination->setupHelper($params);
+		$this->assertIdentical(
+			array('__search_params' => $params),
+			$this->c->helpers[$this->c->SearchPagination->settings['helperName']]
+		);
+		$this->assertIdentical(array('a' => 'b'), $this->c->helpers['Paginator']);
+		$this->assertFalse(in_array($this->c->SearchPagination->settings['helperName'], $this->c->helpers));
+		$this->assertEquals($beforeCount, count($this->c->helpers));
+		$this->_assertHelperOrders();
 	}
 
 	public function testSetup_Get_NoParams() {

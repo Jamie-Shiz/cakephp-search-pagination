@@ -110,11 +110,21 @@ class SearchPaginationComponent extends Component {
 		$ctrl = $this->_controller;
 		$helperName = $this->settings['helperName'];
 
+		if(!array_key_exists('Paginator', $ctrl->helpers)
+			&& !in_array('Paginator', $ctrl->helpers)) {
+			$ctrl->helpers[] = 'Paginator';
+		}
+
 		if (in_array($helperName, $ctrl->helpers)) {
 			unset($ctrl->helpers[array_search($helperName, $ctrl->helpers)]);
 		}
 		if (!array_key_exists($helperName, $ctrl->helpers)) {
 			$ctrl->helpers[$helperName] = array();
+		} else {
+			//Moving plugin config to the end of helpers array
+			$val = $ctrl->helpers[$helperName];
+			unset($ctrl->helpers[$helperName]);
+			$ctrl->helpers[$helperName] = $val;
 		}
 		$ctrl->helpers[$helperName]['__search_params'] = $params;
 	}
