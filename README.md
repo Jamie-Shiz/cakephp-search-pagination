@@ -1,11 +1,10 @@
 CakePHP SearchPagination Plugin
 =====================================
 
-This plugin allows you to keep track of the search parameters
-through the pagination links on query strings.
+This plugin allows you to append search parameters to pagination links with querystring.
 
-You can combined this plugin with [Search plugin](http://github.com/CakeDC/Search);
-SearchPaginationComponent can be an alternative to PrgComponent.
+You can combine this plugin with [Search plugin](http://github.com/CakeDC/Search).
+SearchPaginationComponent can be used as an alternative to PrgComponent.
 
 
 Requirements
@@ -20,6 +19,11 @@ Installation
 
     cd app/Plugin
     git clone http://github.com/tkyk/cakephp-search-pagination SearchPagination
+
+I recommend you to checkout a versioning tag rather than a development branch.
+
+	cd app/Plugin/SearchPagination
+	git checkout x.y.z.w
 
 
 Usage
