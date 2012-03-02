@@ -14,7 +14,9 @@ class SearchPaginationHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->v = new View(null);
-		$this->p = $this->getMock('PaginatorHelper', array('options'), array($this->v));
+		$this->p = new PaginatorHelper($this->v);
+		$this->p->request = new CakeRequest(null, false);
+		$this->p->request->addParams(array('named' => array(), 'pass' => array()));
 	}
 
 	public function tearDown() {
@@ -29,25 +31,50 @@ class SearchPaginationHelperTest extends CakeTestCase {
 	}
 
 	public function testBeforeRender() {
-		$params = array('foo' => 'bar',
-			'baz' => array(1, 2, 3));
+		$params = array(
+			'foo' => 'bar',
+			'baz' => array(1, 2, 3)
+		);
 		$viewFile = "not_used.ctp";
 		$this->_init($params);
 
-		$this->p->expects($this->once())->method('options')
-			->with($this->equalTo(
-					array('url' => array('?' => $params))
-				));
+		$this->p->beforeRender($viewFile);
 		$this->h->beforeRender($viewFile);
+		$this->assertEquals(array('?' => $params), $this->p->options['url']);
 	}
 
-	public function testBeforeRender_empty() {
+	public function testBeforeRenderEmptyOptions() {
 		$params = array();
 		$viewFile = "not_used.ctp";
 		$this->_init($params);
 
-		$this->p->expects($this->never())->method('options');
+		$this->p->beforeRender($viewFile);
 		$this->h->beforeRender($viewFile);
+		$this->assertEquals(array(), $this->p->options['url']);
+	}
+
+	public function testBeforeRenderMergeUrlOptions() {
+		$params = array(
+			'foo' => 'bar',
+			'baz' => array(1, 2, 3)
+		);
+		$viewFile = "not_used.ctp";
+		$this->_init($params);
+
+		$this->p->request->params['pass'] = array(2);
+		$this->p->request->params['named'] = array('foo' => 'bar');
+		$this->p->beforeRender($viewFile);
+
+		$this->assertEquals(
+			array(2, 'foo' => 'bar'),
+			$this->p->options['url']
+		);
+
+		$this->h->beforeRender($viewFile);
+		$this->assertEquals(
+			array(2, 'foo' => 'bar', '?' => $params),
+			$this->p->options['url']
+		);
 	}
 
 }
